@@ -16,11 +16,11 @@ use Untek\Framework\Telegram\Domain\Dto\SendDocumentResult;
 use Untek\Framework\Telegram\Domain\Dto\SendMessageResult;
 use Untek\Framework\Telegram\Domain\Dto\SendPhotoResult;
 use Untek\Framework\Telegram\Domain\Enums\ParseModeEnum;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\EditMessageResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\ForwardMessageResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\SendDocumentResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\SendMessageResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\SendPhotoResultHydrator;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\EditMessageResultNormalizer;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\ForwardMessageResultNormalizer;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\SendDocumentResultNormalizer;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\SendMessageResultNormalizer;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\SendPhotoResultNormalizer;
 
 class TelegramBot implements TelegramBotInterface
 {
@@ -44,7 +44,7 @@ class TelegramBot implements TelegramBotInterface
             'parse_mode' => $parseMode,
         ];
         $response = $this->sendRequest('sendMessage', $requestData);
-        return (new SendMessageResultHydrator())->hydrate($response);
+        return (new SendMessageResultNormalizer())->denormalize($response, SendMessageResult::class);
     }
 
     public function sendDocument(int $chatId, string $file, string $caption = null, string $parseMode = ''): SendDocumentResult
@@ -59,7 +59,7 @@ class TelegramBot implements TelegramBotInterface
             ])
         ];
         $response = $this->sendRequest('sendDocument', [], $options);
-        return (new SendDocumentResultHydrator())->hydrate($response);
+        return (new SendDocumentResultNormalizer())->denormalize($response, SendDocumentResult::class);
     }
 
     public function sendPhoto(int $chatId, string $file, string $caption = null, string $parseMode = ''): SendPhotoResult
@@ -74,7 +74,7 @@ class TelegramBot implements TelegramBotInterface
             ])
         ];
         $response = $this->sendRequest('sendPhoto', [], $options);
-        return (new SendPhotoResultHydrator())->hydrate($response);
+        return (new SendPhotoResultNormalizer())->denormalize($response, SendPhotoResult::class);
     }
 
     public function editMessage(int $chatId, int $messageId, string $text, string $parseMode = ''): SendMessageResult
@@ -87,7 +87,7 @@ class TelegramBot implements TelegramBotInterface
             'parse_mode' => $parseMode,
         ];
         $response = $this->sendRequest('editMessageText', $requestData);
-        return (new EditMessageResultHydrator())->hydrate($response);
+        return (new EditMessageResultNormalizer())->denormalize($response, SendMessageResult::class);
     }
 
     public function forwardMessage(int $fromChatId, int $chatId, int $messageId): ForwardMessageResult
@@ -98,7 +98,7 @@ class TelegramBot implements TelegramBotInterface
             'message_id' => $messageId,
         ];
         $response = $this->sendRequest('forwardMessage', $requestData);
-        return (new ForwardMessageResultHydrator())->hydrate($response);
+        return (new ForwardMessageResultNormalizer())->denormalize($response, ForwardMessageResult::class);
     }
 
     private function sendRequest(string $path, array $requestData, array $options = [], string $method = 'POST'): array {

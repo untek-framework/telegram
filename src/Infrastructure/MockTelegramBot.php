@@ -12,9 +12,8 @@ use Untek\Framework\Telegram\Domain\Dto\SendDocumentResult;
 use Untek\Framework\Telegram\Domain\Dto\SendMessageResult;
 use Untek\Framework\Telegram\Domain\Dto\SendPhotoResult;
 use Untek\Framework\Telegram\Domain\Enums\ParseModeEnum;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\EditMessageResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\SendDocumentResultHydrator;
-use Untek\Framework\Telegram\Infrastructure\Hydrators\SendPhotoResultHydrator;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\SendDocumentResultNormalizer;
+use Untek\Framework\Telegram\Infrastructure\Normalizer\SendPhotoResultNormalizer;
 
 class MockTelegramBot implements TelegramBotInterface
 {
@@ -89,7 +88,7 @@ class MockTelegramBot implements TelegramBotInterface
             ],
             "caption" => $caption
         ];
-        return (new SendDocumentResultHydrator())->hydrate($response);
+        return (new SendDocumentResultNormalizer())->denormalize($response);
     }
 
     public function sendPhoto(int $chatId, string $file, string $caption = null, string $parseMode = ''): SendPhotoResult
@@ -135,7 +134,7 @@ class MockTelegramBot implements TelegramBotInterface
             ],
             'caption' => $caption,
         ];
-        return (new SendPhotoResultHydrator())->hydrate($response);
+        return (new SendPhotoResultNormalizer())->denormalize($response);
     }
 
     public function editMessage(int $chatId, int $messageId, string $text, string $parseMode = 'Markdown'): EditMessageResult
