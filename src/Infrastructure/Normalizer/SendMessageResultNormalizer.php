@@ -29,6 +29,20 @@ class SendMessageResultNormalizer extends DatabaseItemNormalizer
 //            'forward_from',
 //            'forward_date',
         ]);
+
+        $item['from'] = ArrayHelper::extractByKeys($item['from'], [
+            "id",
+            "is_bot",
+            "first_name",
+            "username",
+        ]);
+
+        $item['chat'] = ArrayHelper::extractByKeys($item['chat'], [
+            "id",
+            "title",
+            "type",
+        ]);
+
         /** @var SendMessageResult $dto */
         $dto = MappingHelper::restoreObject($item, SendMessageResult::class);
         return $dto;
