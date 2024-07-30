@@ -12,12 +12,12 @@ use Untek\Framework\Telegram\Domain\Dto\SendDocumentResult;
 class SendDocumentResultNormalizer extends DatabaseItemNormalizer
 {
 
-    public function normalize(mixed $entity): float|array|ArrayObject|bool|int|string|null
+    public function normalize(object $entity): array
     {
         throw new NotImplementedMethodException();
     }
 
-    public function denormalize(mixed $item, string $type)
+    public function denormalize(array $item, string $type): object
     {
 //        unset($item['caption_entities']);
 //        unset($item['all_members_are_administrators']);

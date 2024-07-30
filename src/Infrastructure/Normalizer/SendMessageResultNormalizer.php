@@ -12,12 +12,12 @@ use Untek\Framework\Telegram\Domain\Dto\SendMessageResult;
 class SendMessageResultNormalizer extends DatabaseItemNormalizer
 {
 
-    public function normalize(mixed $entity): float|array|ArrayObject|bool|int|string|null
+    public function normalize(object $entity): array
     {
         throw new NotImplementedMethodException();
     }
 
-    public function denormalize(mixed $item, string $type)
+    public function denormalize(array $item, string $type): object
     {
         $item = ArrayHelper::extractByKeys($item, [
             'message_id',
