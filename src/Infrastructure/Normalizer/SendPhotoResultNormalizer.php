@@ -12,12 +12,12 @@ use Untek\Framework\Telegram\Domain\Dto\SendPhotoResult;
 class SendPhotoResultNormalizer extends DatabaseItemNormalizer
 {
 
-    public function normalize(mixed $entity, string $format = null, array $context = []): float|array|ArrayObject|bool|int|string|null
+    public function normalize(mixed $entity): float|array|ArrayObject|bool|int|string|null
     {
         throw new NotImplementedMethodException();
     }
 
-    public function denormalize(mixed $item, string $type, string $format = null, array $context = [])
+    public function denormalize(mixed $item, string $type)
     {
         $photo = $item['photo'];
         unset($item['photo']);
