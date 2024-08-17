@@ -4,6 +4,7 @@ namespace Untek\Framework\Telegram\Symfony4\Commands;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\Exception\LockAcquiringException;
@@ -21,6 +22,7 @@ class LongPullCommand extends Command
 
     use ContainerAwareTrait;
     use LockTrait;
+    use LockableTrait;
     use LoopTrait;
     use IOTrait;
 
@@ -44,6 +46,12 @@ class LongPullCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
+
+            return Command::SUCCESS;
+        }
+
         $this->setInputOutput($input, $output);
         $output->writeln('<fg=white># Long pull</>');
         $output->writeln('');
@@ -53,11 +61,13 @@ class LongPullCommand extends Command
 //        $this->runProcessWithLock($name);
 
         try {
-            $this->runProcessWithLock($name);
+            $this->runProcess($name);
         } catch (LockAcquiringException $e) {
             $output->writeln('<fg=yellow>' . $e->getMessage() . '</>');
             $output->writeln('');
         }
+
+        $this->release();
 
         return Command::SUCCESS;
     }
